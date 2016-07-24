@@ -2,7 +2,7 @@
 # about: Show which users are writing a reply to a topic
 # version: 0.1
 # authors: André Pereira
-# url:
+# url: https://github.com/adrapereira/discourse-presence.git
 
 enabled_site_setting :presence_enabled
 

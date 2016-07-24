@@ -39,6 +39,7 @@ export default {
               switch(data.users.length) {
                 case 0:
                   controller.setProperties({ presenceWriting: 0, presenceWritingClass: 'hide', presenceWriting: "" });
+                  break;
                 case 1:
                   writing = "@" + data.users[0] + " is writing a reply to this topic"
                   controller.setProperties({ presenceWriting: data.viewers, presenceWritingClass: '', presenceWriting: writing });
