@@ -49,7 +49,8 @@ after_initialize do
     requires_plugin PLUGIN_NAME
 
     def add
-      $redis.hset(redis_channel, current_user.id, Time.zone.now.to_i)
+      $redis.hset(redis_channel, current_user.id, Time.zone.now)
+      delete_old
       MessageBus.publish('/writing-reply', {channel_id: params[:id], user_id: current_user.id.to_s})
       render json: { subscribed: true }
     end
@@ -58,6 +59,34 @@ after_initialize do
       $redis.hdel(redis_channel, current_user.id)
       MessageBus.publish('/writing-reply', {channel_id: params[:id], user_id: current_user.id.to_s})
       render json: { subscribed: false }
+    end
+
+    def alive
+      $redis.hset(redis_channel, current_user.id, Time.zone.now)
+      value = delete_old
+      hash = value[0]
+      original_hash_size = value[1]
+
+      # Publish the new hash if there were any changes
+      if original_hash_size != hash.length
+        MessageBus.publish('/writing-reply', {channel_id: params[:id], user_id: current_user.id.to_s})
+      end
+
+      render json: {alive: true}
+    end
+
+    def delete_old
+      hash = $redis.hgetall(redis_channel)
+      original_hash_size = hash.length
+
+      # Delete entries older than 20 seconds
+      hash.each do |user, time|
+        if Time.zone.now - Time.parse(time) >= 20
+          $redis.hdel(redis_channel, user)
+          hash.delete(user)
+        end
+      end
+      return hash, original_hash_size
     end
 
     private
@@ -70,6 +99,7 @@ after_initialize do
   Presence::Engine.routes.draw do
     get '/writing/:id/add' => 'presences#add'
     get '/writing/:id/remove' => 'presences#remove'
+    get '/writing/:id/alive' => 'presences#alive'
   end
 
   Discourse::Application.routes.append do
