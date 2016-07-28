@@ -6,7 +6,8 @@ export default {
   initialize(){
     ComposerController.reopen({
       presenceWritingClass: 'hide',
-      presenceWriting: ''
+      presenceWriting: '',
+      users: null
     });
   }
 }

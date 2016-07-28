@@ -37,7 +37,11 @@ after_initialize do
 
     user_ids = $redis.hgetall(redis_channel).keys
     users = []
-    users = User.find(user_ids).map(&:username) unless user_ids.blank?
+    unless user_ids.blank?
+      User.find(user_ids).each{ |user|
+        users.push(user.slice(:id,:email,:username,:uploaded_avatar_id,:avatar_template))
+      }
+    end
     # TODO check 'users' has all Users with 'user_ids'
 
     MessageBus.publish("/presence-writing-#{msg.data['channel_id']}", { users: users })

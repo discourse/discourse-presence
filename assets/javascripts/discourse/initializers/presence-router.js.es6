@@ -27,12 +27,13 @@ export default {
           function(){
             this.messageBus.subscribe('/presence-writing-' + topic.id, function(data){
               console.log(data);
+              controller.setProperties({ users: data.users});
               // Remove the current user from the list of users that will be displayed
-              const index = data.users.indexOf(this.currentUser.username);
-              if (index > -1) {
-                data.users.splice(index, 1);
-              }
-              this.update(data);
+              // const index = data.users.indexOf(this.currentUser.username);
+              // if (index > -1) {
+              //   data.users.splice(index, 1);
+              // }
+              // this.update(data);
               // Tell the server we're alive every 15 seconds
               presenceTimer = setInterval(this.alive, 15000);
             }.bind(this));
