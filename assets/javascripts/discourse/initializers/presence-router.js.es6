@@ -27,8 +27,6 @@ export default {
         Discourse.ajax('/presence/writing/' + topic.id + '/add', {method: 'GET'}).then(
           function(){
             this.messageBus.subscribe('/presence-writing-' + topic.id, function(data){
-              console.log(data);
-
               // Remove the current user from the list of users that will be displayed
               for(var i = 0, len = data.users.length; i < len; i++) {
                 if (data.users[i].username === this.currentUser.username) {
