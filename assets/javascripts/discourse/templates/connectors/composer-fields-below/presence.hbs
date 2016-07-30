@@ -1,5 +1,6 @@
-<td class='posters'>
+<div class="presence-writing">
   {{#each users as |user|}}
     <a data-user-card="{{user.username}}">{{avatar user avatarTemplatePath="avatar_template" usernamePath="username" imageSize="small"}}</a>
   {{/each}}
-</td>
+  <small class="{{presenceWritingClass}}">{{presenceWriting}}</small>
+</div>

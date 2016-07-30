@@ -27,7 +27,18 @@ export default {
           function(){
             this.messageBus.subscribe('/presence-writing-' + topic.id, function(data){
               console.log(data);
-              controller.setProperties({ users: data.users});
+              var writing = "", writingClass = "";
+              switch(data.users.length) {
+                case 0:
+                  writingClass = 'hide';
+                  break;
+                case 1:
+                  writing = " is writing a reply to this topic";
+                  break;
+                default:
+                  writing = " are writing a reply to this topic"
+              }
+              controller.setProperties({ presenceWriting: writing, presenceWritingClass: writingClass, users: data.users});
               // Remove the current user from the list of users that will be displayed
               // const index = data.users.indexOf(this.currentUser.username);
               // if (index > -1) {
@@ -41,26 +52,6 @@ export default {
             console.log(msg)
           });
 
-      },
-
-      update: function (data) {
-        var writing = "";
-        switch(data.users.length) {
-          case 0:
-            controller.setProperties({ presenceWriting: 0, presenceWritingClass: 'hide', presenceWriting: "" });
-            break;
-          case 1:
-            writing = "@" + data.users[0] + " is writing a reply to this topic"
-            controller.setProperties({ presenceWriting: data.viewers, presenceWritingClass: '', presenceWriting: writing });
-            break;
-          case 2:
-            writing = "@" + data.users[0] + " and @" + data.users[1] + " are writing a reply to this topic"
-            controller.setProperties({ presenceWriting: data.viewers, presenceWritingClass: '', presenceWriting: writing });
-            break;
-          default:
-            writing = data.users.length + " users are writing a reply to this topic"
-            controller.setProperties({ presenceWriting: data.viewers, presenceWritingClass: '', presenceWriting: writing });
-        }
       },
 
       alive: function () {
