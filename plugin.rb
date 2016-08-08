@@ -44,7 +44,19 @@ after_initialize do
     end
     # TODO check 'users' has all Users with 'user_ids'
 
-    MessageBus.publish("/presence-writing-#{msg.data['channel_id']}", { users: users })
+    # create the drafts collection
+    drafts = []
+    topic = Topic.find(msg.data['channel_id'])
+    unless topic.blank?
+      Draft.where(draft_key: topic.draft_key).each { |draft|
+        user = User.find(draft.user_id)
+        aux_draft = user.slice(:id,:email,:username,:uploaded_avatar_id,:avatar_template)
+        aux_draft['title'] = "#{user.username} - #{draft.updated_at}"
+        drafts.push(aux_draft)
+      }
+    end
+
+    MessageBus.publish("/presence-writing-#{msg.data['channel_id']}", { users: users, drafts: drafts })
   end
 
   require_dependency "application_controller"

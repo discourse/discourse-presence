@@ -35,10 +35,26 @@ export default {
                 }
               }
 
-              var writing = "", writingClass = "";
+              if(typeof data.drafts !== 'undefined'){
+                // Remove the current user from the list of drafts that will be displayed
+                for(var i = 0, len = data.drafts.length; i < len; i++) {
+                  if (data.drafts[i].username === this.currentUser.username) {
+                    data.drafts.splice(i, 1);
+                    break;
+                  }
+                }
+              }
+
+              var writing = "", writingClass = "", users = data.users;
               switch(data.users.length) {
                 case 0:
-                  writingClass = 'hide';
+                  if(typeof data.drafts !== 'undefined' && data.drafts.length != 0){
+                    users = data.drafts;
+                    writing = " drafted a reply";
+                  }else {
+                    users = null;
+                    writingClass = 'hide';
+                  }
                   break;
                 case 1:
                   writing = " is writing a reply to this topic";
@@ -46,7 +62,7 @@ export default {
                 default:
                   writing = " are writing a reply to this topic"
               }
-              controller.setProperties({ presenceWriting: writing, presenceWritingClass: writingClass, users: data.users});
+              controller.setProperties({ presenceWriting: writing, presenceWritingClass: "writingClass", users: users});
               // Tell the server we're alive every 15 seconds
               clearInterval(presenceTimer);
               presenceTimer = setInterval(this.alive, 15000);
@@ -54,7 +70,6 @@ export default {
           }.bind(this), function(msg){
             console.log(msg)
           });
-
       },
 
       alive: function () {
@@ -66,11 +81,11 @@ export default {
       },
 
       removeUser: function () {
+        clearInterval(presenceTimer);
         controller.setProperties({ presenceWritingClass: 'hide', presenceWriting: "", users: [] });
         Discourse.ajax('/presence/writing/' + topic.id + '/remove', {method: 'GET'}).then(function(){
           this.messageBus.unsubscribe('/presence-writing-' + topic.id);
         });
-        clearInterval(presenceTimer);
       }
     });
   }
