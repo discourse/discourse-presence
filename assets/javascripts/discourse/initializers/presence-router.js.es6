@@ -83,8 +83,9 @@ export default {
       removeUser: function () {
         clearInterval(presenceTimer);
         controller.setProperties({ presenceWritingClass: 'hide', presenceWriting: "", users: [] });
+        const self = this;
         Discourse.ajax('/presence/writing/' + topic.id + '/remove', {method: 'GET'}).then(function(){
-          this.messageBus.unsubscribe('/presence-writing-' + topic.id);
+          self.messageBus.unsubscribe('/presence-writing-' + topic.id);
         });
       }
     });
