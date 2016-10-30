@@ -1,5 +1,6 @@
 import TopicRoute from 'discourse/routes/topic'
 import ComposerController from 'discourse/controllers/composer'
+import { ajax } from 'discourse/lib/ajax'
 
 export default {
   name: "presence-router",
@@ -24,7 +25,7 @@ export default {
 
       addUser: function () {
         controller.setProperties({ presenceWritingClass: 'hide', presenceWriting: "", users: [] });
-        Discourse.ajax('/presence/writing/' + topic.id + '/add', {method: 'GET'}).then(
+        ajax('/presence/writing/' + topic.id + '/add', {method: 'GET'}).then(
           function(){
             this.messageBus.subscribe('/presence-writing-' + topic.id, function(data){
               // Remove the current user from the list of users that will be displayed
@@ -73,7 +74,7 @@ export default {
       },
 
       alive: function () {
-        Discourse.ajax('/presence/writing/' + topic.id + '/alive', {method: 'GET'}).then(function(){
+        ajax('/presence/writing/' + topic.id + '/alive', {method: 'GET'}).then(function(){
         }.bind(this), function(){
           // Remove the time if there's an error
           clearInterval(presenceTimer);
@@ -84,7 +85,7 @@ export default {
         clearInterval(presenceTimer);
         controller.setProperties({ presenceWritingClass: 'hide', presenceWriting: "", users: [] });
         const self = this;
-        Discourse.ajax('/presence/writing/' + topic.id + '/remove', {method: 'GET'}).then(function(){
+        ajax('/presence/writing/' + topic.id + '/remove', {method: 'GET'}).then(function(){
           self.messageBus.unsubscribe('/presence-writing-' + topic.id);
         });
       }
