@@ -24,6 +24,10 @@ export default {
       }),
 
       addUser: function () {
+        // Skip if this is a new topic
+        if(typeof topic == 'undefined')
+          return
+
         controller.setProperties({ presenceWritingClass: 'hide', presenceWriting: "", users: [] });
         ajax('/presence/writing/' + topic.id + '/add', {method: 'GET'}).then(
           function(){
@@ -74,6 +78,10 @@ export default {
       },
 
       alive: function () {
+        // Skip if this is a new topic
+        if(typeof topic == 'undefined')
+          return
+
         ajax('/presence/writing/' + topic.id + '/alive', {method: 'GET'}).then(function(){
         }.bind(this), function(){
           // Remove the time if there's an error
@@ -82,6 +90,10 @@ export default {
       },
 
       removeUser: function () {
+        // Skip if this is a new topic
+        if(typeof topic == 'undefined')
+          return
+
         clearInterval(presenceTimer);
         controller.setProperties({ presenceWritingClass: 'hide', presenceWriting: "", users: [] });
         const self = this;
