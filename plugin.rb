@@ -31,21 +31,21 @@ after_initialize do
     def self.add(type, id, user_id)
       redis_key = get_redis_key(type, id)
       response = $redis.hset(redis_key, user_id, Time.zone.now)
-      
+
       response # Will be true if a new key
     end
 
     def self.remove(type, id, user_id)
       redis_key = get_redis_key(type, id)
       response = $redis.hdel(redis_key, user_id)
-      
+
       response > 0 # Return true if key was actually deleted
     end
 
     def self.get_users(type, id)
       redis_key = get_redis_key(type, id)
       user_ids = $redis.hkeys(redis_key).map(&:to_i)
-      
+
       User.where(id: user_ids)
     end
 
@@ -56,7 +56,7 @@ after_initialize do
         users: serialized_users
       }
       MessageBus.publish(get_messagebus_channel(type, id), message.as_json)
-      
+
       users
     end
 
