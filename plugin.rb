@@ -31,19 +31,22 @@ after_initialize do
     def self.add(type, id, user_id)
       redis_key = get_redis_key(type, id)
       response = $redis.hset(redis_key, user_id, Time.zone.now)
-      return response # Will be true if a new key
+      
+      response # Will be true if a new key
     end
 
     def self.remove(type, id, user_id)
       redis_key = get_redis_key(type, id)
       response = $redis.hdel(redis_key, user_id)
-      return response > 0 # Return true if key was actually deleted
+      
+      response > 0 # Return true if key was actually deleted
     end
 
     def self.get_users(type, id)
       redis_key = get_redis_key(type, id)
       user_ids = $redis.hkeys(redis_key).map(&:to_i)
-      return User.where(id: user_ids)
+      
+      User.where(id: user_ids)
     end
 
     def self.publish(type, id)
@@ -53,7 +56,8 @@ after_initialize do
         users: serialized_users
       }
       MessageBus.publish(get_messagebus_channel(type, id), message.as_json)
-      return users
+      
+      users
     end
 
     def self.cleanup(type, id)
@@ -69,7 +73,7 @@ after_initialize do
         end
       end
 
-      return any_changes
+      any_changes
     end
 
   end
@@ -92,7 +96,7 @@ after_initialize do
         type = data[:previous][:post_id] ? 'post' : 'topic'
         id = data[:previous][:post_id] ? data[:previous][:post_id] : data[:previous][:topic_id]
 
-        any_changes = false;
+        any_changes = false
         any_changes ||= Presence::PresenceManager.remove(type, id, current_user.id)
         any_changes ||= Presence::PresenceManager.cleanup(type, id)
 
@@ -106,7 +110,7 @@ after_initialize do
         type = data[:current][:post_id] ? 'post' : 'topic'
         id = data[:current][:post_id] ? data[:current][:post_id] : data[:current][:topic_id]
 
-        any_changes = false;
+        any_changes = false
         any_changes ||= Presence::PresenceManager.add(type, id, current_user.id)
         any_changes ||= Presence::PresenceManager.cleanup(type, id)
 

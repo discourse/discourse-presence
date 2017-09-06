@@ -17,9 +17,9 @@ function initialize(api) {
     },
 
     updateStateObject(){
-      let composeState = this.get('model.composeState');
+      const composeState = this.get('model.composeState');
 
-      let stateObject = {
+      const stateObject = {
         compose_state: composeState ? composeState : 'closed'
       };
 
@@ -44,8 +44,8 @@ function initialize(api) {
     },
 
     shouldSharePresence(){
-      let isOpen = this.get('presenceState.compose_state') !== 'open';
-      let isEditing = ['edit','reply'].includes(this.get('presenceState.action'));
+      const isOpen = this.get('presenceState.compose_state') !== 'open';
+      const isEditing = ['edit','reply'].includes(this.get('presenceState.action'));
       return isOpen && isEditing;
     },
 
@@ -66,10 +66,10 @@ function initialize(api) {
           current: this.get('presenceState')
         }
       }).then((data) => {
-        let messageBusChannel = data['messagebus_channel'];
+        const messageBusChannel = data['messagebus_channel'];
         if(messageBusChannel){
-          let users = data['users'];
-          let messageBusId = data['messagebus_id'];
+          const users = data['users'];
+          const messageBusId = data['messagebus_id'];
           this.set('presenceUsers', users);
           this.set('messageBusChannel', messageBusChannel);
           this.messageBus.subscribe(messageBusChannel, message => {
