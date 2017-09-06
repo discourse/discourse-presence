@@ -21,7 +21,7 @@ after_initialize do
 
   module ::Presence::PresenceManager
     def self.get_redis_key(type, id)
-      return "presence:#{type}:#{id}"
+      "presence:#{type}:#{id}"
     end
 
     def self.get_messagebus_channel(type, id)
