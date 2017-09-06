@@ -1,4 +1,4 @@
-# name: Discourse Presence
+# name: discourse-presence
 # about: Show which users are writing a reply to a topic
 # version: 1.0
 # authors: André Pereira, David Taylor
