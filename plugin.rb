@@ -1,6 +1,6 @@
 # name: Discourse Presence
 # about: Show which users are writing a reply to a topic
-# version: 0.1
+# version: 1.0
 # authors: André Pereira, David Taylor
 # url: https://github.com/discourse/discourse-presence.git
 
